@@ -1,6 +1,6 @@
 #include "philolo.h"
 
-void ft_usleep(long time)
+void my_usleep(long time)
 {
     long start;
 
@@ -9,20 +9,28 @@ void ft_usleep(long time)
         usleep(100);
 }
 
-long get_time(void)
+ssize_t get_time(void)
 {
     struct timeval time;
 
-    gettimeofday(&time, NULL);
+    if(gettimeofday(&time, NULL) == -1)
+    {
+        printf("Error: gettimeofday failed\n");
+        exit(-1);
+    }
     return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
 
-void print_status(t_data *data, int id, int status)
+int print_status(t_data *data, int id, int status)
 {
+    ssize_t time;
     pthread_mutex_lock(&data->print_mutex);
     if (data->death == false)
     {
-        printf("%ld %d ", get_time() - data->philos[0].last_eat, id + 1);
+        time = get_time();
+        if (time == -1)
+            return(-1);
+        printf("%ld %d ",  - data->philos[0].last_eat, id + 1);
         if (status == EAT)
             printf("is eating\n");
         else if (status == SLEEP)
@@ -53,12 +61,17 @@ void init_philos(t_data *data)
     }
 }
 
-void init_mutex(t_data *data)
+int init_mutex(t_data *data)
 {
     int i;
 
     i = 0;
     data->fork_mutex = malloc(sizeof(pthread_mutex_t) * data->num_philo);
+    if (!data->fork_mutex)
+    {
+        printf("Error: Malloc failed\n");
+        return(1);
+    }
     while (i < data->num_philo)
     {
         pthread_mutex_init(&data->fork_mutex[i], NULL);
@@ -66,6 +79,7 @@ void init_mutex(t_data *data)
     }
     pthread_mutex_init(&data->print_mutex, NULL);
     pthread_mutex_init(&data->death_mutex, NULL);
+    return(0);
 }
 
 void destroy_mutex(t_data *data)
@@ -84,14 +98,14 @@ void destroy_mutex(t_data *data)
 
 int init_data(t_data *data, int argc, char **argv)
 {
-    data->num_philo = atoi(argv[1]);
-    data->time_to_die = atoi(argv[2]);
-    data->time_to_eat = atoi(argv[3]);
-    data->time_to_sleep = atoi(argv[4]);
+    data->num_philo = ft_atoull(argv[1]);
+    data->time_to_eat = ft_atoull(argv[3]);
+    data->time_to_die = ft_atoull(argv[2]);
+    data->time_to_sleep = ft_atoull(argv[4]);
     data->num_must_eat = -1;
     if (argc == 6)
-        data->num_must_eat = atoi(argv[5]);
-    data->forks = malloc(sizeof(int) * data->num_philo);
+        data->num_must_eat = ft_atoull(argv[5]);
+    data->forks = malloc(sizeof(int) * data->num_philo); // need to init the forks id
     data->philos = malloc(sizeof(t_philo) * data->num_philo);
     if (!data->forks || !data->philos)
     {
@@ -132,12 +146,22 @@ int main(int argc, char **argv)
         printf("Error: Wrong number of arguments\n");
         return (1);
     }
+    if (!scan_args(argc, argv))
+    {
+        printf("Error: Invalid arguments\n");
+        return (1);
+    }
     if (init_data(&data, argc, argv))
         return (1);
     init_philos(&data);
-    init_mutex(&data);
-    if (start_simulation(&data))
+    if(init_mutex(&data))
+    {
+        free(data.forks);
+        free(data.philos);
         return (1);
+    }
+    // if (start_simulation(&data))
+    //     return (1);
     destroy_mutex(&data);
     return (0);
 }

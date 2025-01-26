@@ -9,8 +9,6 @@ unsigned long long	ft_atoull(const char *str)
 	i = 0;
 	while (*str == ' ' || (*str >= '\t' && *str <= '\r'))
 		str++;
-	if (*str == '+')
-		str++;
 	while (str[i])
 		i++;
 	if (i > 19)

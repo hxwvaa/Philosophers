@@ -16,15 +16,7 @@
 #define FORK 3
 #define DEAD 4
 
-typedef struct s_philo
-{
-    int id;
-    int left_fork;
-    int right_fork;
-    int eat_count;
-    long last_eat;
-    pthread_t thread;
-} t_philo;
+typedef struct s_philo t_philo;
 
 typedef struct s_data
 {
@@ -41,8 +33,26 @@ typedef struct s_data
     bool death;
 } t_data;
 
+typedef struct s_philo
+{
+    int id;
+    int left_fork;
+    int right_fork;
+    int eat_count;
+    long last_eat;
+    pthread_t thread;
+    t_data *sh_data;
+} t_philo;
+
+
+
 
 unsigned long long ft_atoull(const char *str);
 
+long get_time(void);
+
+void my_usleep(long time);
+
+void print_status(t_data *data, int id, int status);
 
 #endif
