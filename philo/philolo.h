@@ -30,7 +30,9 @@ typedef struct s_data
     pthread_mutex_t *fork_mutex;
     pthread_mutex_t print_mutex;
     pthread_mutex_t death_mutex;
+    pthread_t monitor;
     bool death;
+    ssize_t start_time;
 } t_data;
 
 typedef struct s_philo
@@ -53,6 +55,6 @@ long get_time(void);
 
 void my_usleep(long time);
 
-void print_status(t_data *data, int id, int status);
+int print_status(t_data *data, int id, int status);
 
 #endif

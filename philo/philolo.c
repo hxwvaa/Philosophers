@@ -23,13 +23,13 @@ ssize_t get_time(void)
 
 int print_status(t_data *data, int id, int status)
 {
-    ssize_t time;
+    // ssize_t time;
     pthread_mutex_lock(&data->print_mutex);
     if (data->death == false)
     {
-        time = get_time();
-        if (time == -1)
-            return(-1);
+        // time = get_time();
+        // if (time == -1)
+        //     return(-1);
         printf("%ld %d ",  - data->philos[0].last_eat, id + 1);
         if (status == EAT)
             printf("is eating\n");
@@ -43,20 +43,23 @@ int print_status(t_data *data, int id, int status)
             printf("died\n");
     }
     pthread_mutex_unlock(&data->print_mutex);
+    return (0);
 }
 
 void init_philos(t_data *data)
 {
     int i;
+    int start;
 
     i = 0;
+    data->start_time = get_time();
     while (i < data->num_philo)
     {
-        data->philos[i].id = i;
+        data->philos[i].id = i + 1;
         data->philos[i].left_fork = i;
         data->philos[i].right_fork = (i + 1) % data->num_philo;
         data->philos[i].eat_count = 0;
-        data->philos[i].last_eat = get_time();
+        data->philos[i].last_eat = data->start_time;
         i++;
     }
 }
@@ -96,6 +99,17 @@ void destroy_mutex(t_data *data)
     pthread_mutex_destroy(&data->death_mutex);
 }
 
+void init_forks(t_data *data)
+{
+    int i;
+
+    i = 0;
+    while (i < data->num_philo)
+    {
+        
+    }
+}
+
 int init_data(t_data *data, int argc, char **argv)
 {
     data->num_philo = ft_atoull(argv[1]);
@@ -112,6 +126,7 @@ int init_data(t_data *data, int argc, char **argv)
         printf("Error: Malloc failed\n");
         return (1);
     }
+    init_forks(data);
     return (0);
 }
 
@@ -137,6 +152,41 @@ bool scan_args(int argc, char **argv)
     return (true);
 }
 
+void *philo_routine(void *arg)
+{
+    return(arg);
+}
+
+void *monitor_routine(void *arg)
+{
+    return(arg);
+}
+
+int create_philos(t_data *data)
+{
+    int i;
+
+    i = 0;
+    while (i < data->num_philo)
+    {
+        if (pthread_create(&data->philos[i].thread,
+                NULL, &philo_routine, &data->philos[i]))
+            return (printf("Error: pthread_create failed\n"), 1);
+        i++;
+    }
+    if (pthread_create(&data->monitor, NULL, &monitor_routine, data))
+        return (printf("Error: pthread_create failed\n"), 1);
+    if (pthread_join(data->monitor, NULL))
+        return (printf("Error: pthread_join failed\n"), 1);
+    while (i < data->num_philo)
+    {
+        if (pthread_join(data->philos[i].thread, NULL))
+            return (printf("Error: pthread_join failed\n"), 1);
+        i++;
+    }
+    return(0);
+}
+
 int main(int argc, char **argv)
 {
     t_data data;
@@ -155,6 +205,12 @@ int main(int argc, char **argv)
         return (1);
     init_philos(&data);
     if(init_mutex(&data))
+    {
+        free(data.forks);
+        free(data.philos);
+        return (1);
+    }
+    if(create_philos(&data))
     {
         free(data.forks);
         free(data.philos);
