@@ -1,7 +1,7 @@
 NAME = philo
-CC = clang-19
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address,undefined,integer
-SRC = philolo.c philolo_utils.c
+CC = cc
+CFLAGS = -Wall -Wextra -Werror -g3
+SRC = philolo.c philolo_utils.c philolo_inits.c
 OBJ = $(SRC:.c=.o)
 
 %.o: %.c philolo.h
