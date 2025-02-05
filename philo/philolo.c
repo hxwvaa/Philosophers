@@ -18,13 +18,18 @@ int my_usleep(long time, t_philo *philo)
 int print_status(t_data *data, int id, int status)
 {
     // ssize_t time;
+
     pthread_mutex_lock(&data->print_mutex);
-    if (!deadlolo(data))
+    // if (status == DEAD)
+    // {
+    //     pthread_mutex_lock(&data->death_mutex);
+    //     data->death = false;
+    //     pthread_mutex_unlock(&data->death_mutex);
+    // }
+    if (status == DEAD || !deadlolo(data))
     {
-        // time = get_time();
-        // if (time == -1)
-        //     return(-1);
-        printf("%lld %d ", get_time() - data->start_time, id);
+
+        printf("%llu %d ", get_time() - data->start_time, id);
         if (status == EAT)
             printf("is eating\n");
         else if (status == SLEEP)
@@ -112,6 +117,9 @@ int peristaltic_continuum(t_philo *philo)
     {
         print_status(philo->sh_data, philo->id, FORK);
         print_status(philo->sh_data, philo->id, FORK);
+        law_and_order(philo, &first, &second);
+        pthread_mutex_unlock(&philo->sh_data->fork_mutex[first]);
+        pthread_mutex_unlock(&philo->sh_data->fork_mutex[second]);
         print_status(philo->sh_data, philo->id, EAT);
         if (my_usleep(philo->sh_data->time_to_eat, philo) == 1)
             return(1);
@@ -119,9 +127,10 @@ int peristaltic_continuum(t_philo *philo)
         philo->last_eat = get_time();
         philo->eat_count++;
         pthread_mutex_unlock(&philo->sh_data->eat_mutex);
+        pthread_mutex_lock(&philo->sh_data->fork_mutex[first]);
+        pthread_mutex_lock(&philo->sh_data->fork_mutex[second]);
         philo->sh_data->forks[philo->left_fork] = philo->id;
         philo->sh_data->forks[philo->right_fork] = philo->id;
-        law_and_order(philo, &first, &second);
         pthread_mutex_unlock(&philo->sh_data->fork_mutex[first]);
         pthread_mutex_unlock(&philo->sh_data->fork_mutex[second]);
         print_status(philo->sh_data, philo->id, SLEEP);
@@ -145,6 +154,9 @@ void *philo_routine(void *arg)
     if (philo->sh_data->num_philo == 1)
     {
         my_usleep(philo->sh_data->time_to_die, philo);
+        pthread_mutex_lock(&philo->sh_data->death_mutex);
+        philo->sh_data->death = true;
+        pthread_mutex_unlock(&philo->sh_data->death_mutex);
         print_status(philo->sh_data, philo->id, DEAD);
         return(NULL);
     }
@@ -157,9 +169,23 @@ void *philo_routine(void *arg)
                 return(NULL);
         }
     }
-    pthread_mutex_unlock(&philo->sh_data->fork_mutex[first]);
-    pthread_mutex_unlock(&philo->sh_data->fork_mutex[second]);
+    // pthread_mutex_unlock(&philo->sh_data->fork_mutex[first]);
+    // pthread_mutex_unlock(&philo->sh_data->fork_mutex[second]);
     return (NULL);
+}
+
+int check_eats(t_data *data)
+{
+    unsigned long long i;
+
+    i = 0;
+    while (i < data->num_philo)
+    {
+        if (data->philos[i].eat_count < data->num_eat)
+            return(0);
+        i++;
+    }
+    return(1);
 }
 
 void *monitor_routine(void *arg)
@@ -173,8 +199,9 @@ void *monitor_routine(void *arg)
         i = 0;
         while (i < data->num_philo)
         {
+            // printf("id: %llu time alive: %lld\n", i + 1, get_time() - data->philos[i].last_eat);
             pthread_mutex_lock(&data->eat_mutex);
-            if (data->num_eat > 0 && data->philos[i].eat_count >= data->num_eat)
+            if (data->num_eat > 0 && check_eats(data))
             {
                 pthread_mutex_lock(&data->death_mutex);
                 data->death = true;
@@ -187,7 +214,7 @@ void *monitor_routine(void *arg)
                 pthread_mutex_lock(&data->death_mutex);
                 data->death = true;
                 pthread_mutex_unlock(&data->death_mutex);
-                print_status(data, i, DEAD);
+                print_status(data, data->philos[i].id, DEAD);
                 pthread_mutex_unlock(&data->eat_mutex);
                 return (NULL);
             }
