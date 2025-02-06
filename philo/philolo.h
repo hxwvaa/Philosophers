@@ -54,7 +54,7 @@ unsigned long long ft_atoull(const char *str);
 bool scan_args(int argc, char **argv);
 unsigned long long get_time(void);
 int deadlolo(t_data *sh_data);
-int my_usleep(long time, t_philo *philo);
+int my_usleep(unsigned long long time, t_philo *philo);
 int print_status(t_data *data, int id, int status);
 
 
