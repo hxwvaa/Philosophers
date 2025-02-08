@@ -6,7 +6,7 @@
 /*   By: hbasheer <hbasheer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:41:31 by hbasheer          #+#    #+#             */
-/*   Updated: 2025/02/08 19:16:54 by hbasheer         ###   ########.fr       */
+/*   Updated: 2025/02/08 19:39:41 by hbasheer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,19 +30,19 @@ int	fork_checker(t_philo *philo, int first, int second)
 
 void	release_forks(t_philo *philo, int first, int second)
 {
-	fork_lock_order(philo, &first, &second);
+	lock_order(philo, &first, &second);
 	pthread_mutex_unlock(&philo->sh_data->fork_mutex[first]);
 	pthread_mutex_unlock(&philo->sh_data->fork_mutex[second]);
 }
 
 void	lock_forks(t_philo *philo, int first, int second)
 {
-	fork_lock_order(philo, &first, &second);
+	lock_order(philo, &first, &second);
 	pthread_mutex_lock(&philo->sh_data->fork_mutex[first]);
 	pthread_mutex_lock(&philo->sh_data->fork_mutex[second]);
 }
 
-void	fork_lock_order(t_philo *philo, int *first, int *second)
+void	lock_order(t_philo *philo, int *first, int *second)
 {
 	if (philo->left_fork < philo->right_fork)
 	{

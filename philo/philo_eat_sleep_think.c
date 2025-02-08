@@ -6,7 +6,7 @@
 /*   By: hbasheer <hbasheer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:41:38 by hbasheer          #+#    #+#             */
-/*   Updated: 2025/02/08 19:19:53 by hbasheer         ###   ########.fr       */
+/*   Updated: 2025/02/08 19:39:41 by hbasheer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	philo_eat(t_philo *philo)
 	int	first;
 	int	second;
 
-	fork_lock_order(philo, &first, &second);
+	lock_order(philo, &first, &second);
 	if (print_status(philo->sh_data, philo->id, FORK) == 1)
 		return (1);
 	if (print_status(philo->sh_data, philo->id, FORK) == 1)

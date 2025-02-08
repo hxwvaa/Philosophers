@@ -6,7 +6,7 @@
 /*   By: hbasheer <hbasheer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:37:58 by hbasheer          #+#    #+#             */
-/*   Updated: 2025/02/08 19:19:53 by hbasheer         ###   ########.fr       */
+/*   Updated: 2025/02/08 19:39:41 by hbasheer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int						philo_sleep(t_philo *philo);
 int						philo_think(t_philo *philo);
 
 // - FORK FUNCTIONS - //
-void					fork_lock_order(t_philo *philo, int *first, int *second);
+void					lock_order(t_philo *philo, int *first, int *second);
 void					lock_forks(t_philo *philo, int first, int second);
 void					release_forks(t_philo *philo, int first, int second);
 int						fork_checker(t_philo *philo, int first, int second);

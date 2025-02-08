@@ -6,7 +6,7 @@
 /*   By: hbasheer <hbasheer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:41:28 by hbasheer          #+#    #+#             */
-/*   Updated: 2025/02/08 19:19:53 by hbasheer         ###   ########.fr       */
+/*   Updated: 2025/02/08 19:39:41 by hbasheer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	*philo_routine(void *arg)
 	}
 	while (!is_dead(philo->sh_data))
 	{
-		fork_lock_order(philo, &first, &second);
+		lock_order(philo, &first, &second);
 		if (fork_checker(philo, first, second))
 		{
 			lock_forks(philo, first, second);
