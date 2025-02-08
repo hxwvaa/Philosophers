@@ -6,7 +6,7 @@
 /*   By: hbasheer <hbasheer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:37:58 by hbasheer          #+#    #+#             */
-/*   Updated: 2025/02/08 18:37:59 by hbasheer         ###   ########.fr       */
+/*   Updated: 2025/02/08 18:57:07 by hbasheer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,5 @@ void					law_and_order(t_philo *philo, int *first, int *second);
 void					arrest_the_forks(t_philo *philo, int first, int second);
 void					pardon_the_forks(t_philo *philo, int first, int second);
 int						fork_checkers(t_philo *philo, int first, int second);
-
-int						deadlolo(t_data *sh_data);
 
 #endif
