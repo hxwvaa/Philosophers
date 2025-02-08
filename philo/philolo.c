@@ -20,15 +20,12 @@ int print_status(t_data *data, int id, int status)
     // ssize_t time;
 
     pthread_mutex_lock(&data->print_mutex);
-    // if (status == DEAD)
-    // {
-    //     pthread_mutex_lock(&data->death_mutex);
-    //     data->death = false;
-    //     pthread_mutex_unlock(&data->death_mutex);
-    // }
-    if (status == DEAD || !deadlolo(data))
+    if (status == DEAD)
+        printf("%llu %d died\n", get_time() - data->start_time, id);
+    if (deadlolo(data))
+        return(pthread_mutex_unlock(&data->print_mutex), 1);
+    if (!deadlolo(data))
     {
-
         printf("%llu %d ", get_time() - data->start_time, id);
         if (status == EAT)
             printf("is eating\n");
@@ -38,8 +35,6 @@ int print_status(t_data *data, int id, int status)
             printf("is thinking\n");
         else if (status == FORK)
             printf("has taken a fork\n");
-        else if (status == DEAD)
-            printf("died\n");
     }
     pthread_mutex_unlock(&data->print_mutex);
     return (0);
@@ -100,6 +95,47 @@ void arrest_the_forks(t_philo *philo, int first, int second)
     law_and_order(philo, &first, &second);
     pthread_mutex_lock(&philo->sh_data->fork_mutex[first]);
     pthread_mutex_lock(&philo->sh_data->fork_mutex[second]);
+
+}
+
+int consumption(t_philo *philo)
+{
+    int first;
+    int second;
+
+    law_and_order(philo, &first, &second);
+    if (print_status(philo->sh_data, philo->id, FORK) == 1)
+        return(1);
+    if (print_status(philo->sh_data, philo->id, FORK) == 1)
+        return(1);
+    if (print_status(philo->sh_data, philo->id, EAT) == 1)
+        return(1);
+    if (my_usleep(philo->sh_data->time_to_eat, philo) == 1)
+        return(1);
+    pthread_mutex_lock(&philo->sh_data->eat_mutex);
+    philo->last_eat = get_time();
+    philo->eat_count++;
+    pthread_mutex_unlock(&philo->sh_data->eat_mutex);
+    philo->sh_data->forks[philo->left_fork] = philo->id;
+    philo->sh_data->forks[philo->right_fork] = philo->id;
+    pardon_the_forks(philo, first, second);
+    return(0);
+}
+
+int slumberment(t_philo *philo)
+{
+    if (print_status(philo->sh_data, philo->id, SLEEP) == 1)
+        return(1);
+    if (my_usleep(philo->sh_data->time_to_sleep, philo) == 1)
+        return(1);
+    return(0);
+}
+
+int ponderation(t_philo *philo)
+{
+    if (print_status(philo->sh_data, philo->id, THINK) == 1)
+        return(1);  
+    return(0);
 }
 
 int fork_checkers(t_philo *philo, int first, int second)
@@ -115,66 +151,55 @@ int fork_checkers(t_philo *philo, int first, int second)
     second_id = philo->sh_data->forks[second];
     pthread_mutex_unlock(&philo->sh_data->fork_mutex[second]);
     if (first_id != philo->id && second_id != philo->id)
-    {
-        arrest_the_forks(philo, first, second); // lock before eating and not here
+        // arrest_the_forks(philo, first, second); // lock before eating and not here
         return(1);
-    }
     return(0);
 }
 
-int peristaltic_continuum(t_philo *philo)
+
+
+// int peristaltic_continuum(t_philo *philo)
+// {
+//     int first;
+//     int second;
+
+//     if (!deadlolo(philo->sh_data))
+//     {
+//         law_and_order(philo, &first, &second);
+        
+//         print_status(philo->sh_data, philo->id, SLEEP);
+//         if (my_usleep(philo->sh_data->time_to_sleep, philo) == 1)
+//             return(1);
+//         print_status(philo->sh_data, philo->id, THINK);
+//     }
+//     // if (deadlolo(philo->sh_data))
+//     // {
+//     //     pthread_mutex_unlock(&philo->sh_data->fork_mutex[first]);
+//     //     pthread_mutex_unlock(&philo->sh_data->fork_mutex[second]);
+//     //     // return(1);  
+//     // }
+//     return(0);
+// }
+
+void solitary_confinement(t_philo *philo)
 {
-    int first;
-    int second;
-
-    if (!deadlolo(philo->sh_data))
-    {
-        print_status(philo->sh_data, philo->id, FORK);
-        print_status(philo->sh_data, philo->id, FORK);
-        law_and_order(philo, &first, &second);
-        print_status(philo->sh_data, philo->id, EAT);
-        if (my_usleep(philo->sh_data->time_to_eat, philo) == 1)
-            return(pardon_the_forks(philo, first, second), 1);
-        // pardon_the_forks(philo, first, second);
-        pthread_mutex_lock(&philo->sh_data->eat_mutex);
-        philo->last_eat = get_time();
-        philo->eat_count++;
-        pthread_mutex_unlock(&philo->sh_data->eat_mutex);
-        // arrest_the_forks(philo, first, second);
-        philo->sh_data->forks[philo->left_fork] = philo->id;
-        philo->sh_data->forks[philo->right_fork] = philo->id;
-        pardon_the_forks(philo, first, second);
-        print_status(philo->sh_data, philo->id, SLEEP);
-        if (my_usleep(philo->sh_data->time_to_sleep, philo) == 1)
-            return(1);
-        print_status(philo->sh_data, philo->id, THINK);
-    }
-    // if (deadlolo(philo->sh_data))
-    // {
-    //     pthread_mutex_unlock(&philo->sh_data->fork_mutex[first]);
-    //     pthread_mutex_unlock(&philo->sh_data->fork_mutex[second]);
-    //     // return(1);  
-    // }
-    return(0);
+    my_usleep(philo->sh_data->time_to_die, philo);
+    pthread_mutex_lock(&philo->sh_data->death_mutex);
+    philo->sh_data->death = true;
+    pthread_mutex_unlock(&philo->sh_data->death_mutex);
+    print_status(philo->sh_data, philo->id, DEAD);
 }
 
-
-void *philo_routine(void *arg)
+void *peristaltic_continuum(void *arg)
 {
     t_philo *philo;
-
     int first;
     int second;
     
     philo = (t_philo *)arg;
-    // printf("\nnum_philo: %llu\n", philo->sh_data->num_philo);
     if (philo->sh_data->num_philo == 1)
     {
-        my_usleep(philo->sh_data->time_to_die, philo);
-        pthread_mutex_lock(&philo->sh_data->death_mutex);
-        philo->sh_data->death = true;
-        pthread_mutex_unlock(&philo->sh_data->death_mutex);
-        print_status(philo->sh_data, philo->id, DEAD);
+        solitary_confinement(philo);
         return(NULL);
     }
     while (!deadlolo(philo->sh_data))
@@ -182,12 +207,15 @@ void *philo_routine(void *arg)
         law_and_order(philo, &first, &second);
         if (fork_checkers(philo, first, second))
         {
-            if (peristaltic_continuum(philo) == 1)
+            arrest_the_forks(philo, first, second);
+            if(consumption(philo) == 1)
+                return(pardon_the_forks(philo, first, second), NULL);
+            if(slumberment(philo) == 1)
+                return(NULL);
+            if(ponderation(philo) == 1)
                 return(NULL);
         }
     }
-    // pthread_mutex_unlock(&philo->sh_data->fork_mutex[first]);
-    // pthread_mutex_unlock(&philo->sh_data->fork_mutex[second]);
     return (NULL);
 }
 
@@ -251,7 +279,7 @@ int create_philos(t_data *data)
     while (i < data->num_philo)
     {
         if (pthread_create(&data->philos[i].thread,
-                NULL, &philo_routine, &data->philos[i]))
+                NULL, &peristaltic_continuum, &data->philos[i]))
             return (printf("Error: pthread_create failed\n"), 1);
         i++;
     }
