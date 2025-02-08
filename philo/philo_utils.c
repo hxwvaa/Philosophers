@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philolo_utils.c                                    :+:      :+:    :+:   */
+/*   philo_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hbasheer <hbasheer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:41:20 by hbasheer          #+#    #+#             */
-/*   Updated: 2025/02/08 18:41:21 by hbasheer         ###   ########.fr       */
+/*   Updated: 2025/02/08 19:14:56 by hbasheer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philolo.h"
+#include "philo.h"
 
 unsigned long long	ft_atoull(const char *str)
 {
@@ -70,7 +70,7 @@ int	my_usleep(unsigned long long time, t_philo *philo)
 	start = get_time();
 	while (get_time() - start < time)
 	{
-		if (deadlolo(philo->sh_data))
+		if (is_dead(philo->sh_data))
 			return (1);
 		usleep(500);
 	}
@@ -82,9 +82,9 @@ int	print_status(t_data *data, int id, int status)
 	pthread_mutex_lock(&data->print_mutex);
 	if (status == DEAD)
 		printf("%llu %d died\n", get_time() - data->start_time, id);
-	if (deadlolo(data))
+	if (is_dead(data))
 		return (pthread_mutex_unlock(&data->print_mutex), 1);
-	if (!deadlolo(data))
+	if (!is_dead(data))
 	{
 		printf("%llu %d ", get_time() - data->start_time, id);
 		if (status == EAT)

@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   monitor_tings.c                                    :+:      :+:    :+:   */
+/*   philo_monitor.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hbasheer <hbasheer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:41:26 by hbasheer          #+#    #+#             */
-/*   Updated: 2025/02/08 18:41:27 by hbasheer         ###   ########.fr       */
+/*   Updated: 2025/02/08 19:14:56 by hbasheer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philolo.h"
+#include "philo.h"
 
 int	check_eats(t_data *data)
 {
@@ -26,7 +26,7 @@ int	check_eats(t_data *data)
 	return (1);
 }
 
-void	consumption_concluded(t_data *data)
+void	meals_concluded(t_data *data)
 {
 	pthread_mutex_lock(&data->death_mutex);
 	data->death = true;
@@ -34,7 +34,7 @@ void	consumption_concluded(t_data *data)
 	pthread_mutex_unlock(&data->eat_mutex);
 }
 
-void	time_has_come(t_data *data, unsigned long long i)
+void	philo_died(t_data *data, unsigned long long i)
 {
 	pthread_mutex_lock(&data->death_mutex);
 	data->death = true;
@@ -49,7 +49,7 @@ void	*monitor_routine(void *arg)
 	unsigned long long	i;
 
 	data = (t_data *)arg;
-	while (!deadlolo(data))
+	while (!is_dead(data))
 	{
 		i = 0;
 		while (i < data->num_philo)
@@ -57,12 +57,12 @@ void	*monitor_routine(void *arg)
 			pthread_mutex_lock(&data->eat_mutex);
 			if (data->num_eat > 0 && check_eats(data))
 			{
-				consumption_concluded(data);
+				meals_concluded(data);
 				return (NULL);
 			}
 			if (get_time() - data->philos[i].last_eat > data->time_to_die)
 			{
-				time_has_come(data, i);
+				philo_died(data, i);
 				return (NULL);
 			}
 			pthread_mutex_unlock(&data->eat_mutex);

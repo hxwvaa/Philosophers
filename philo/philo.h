@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philolo.h                                          :+:      :+:    :+:   */
+/*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hbasheer <hbasheer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:37:58 by hbasheer          #+#    #+#             */
-/*   Updated: 2025/02/08 18:57:07 by hbasheer         ###   ########.fr       */
+/*   Updated: 2025/02/08 19:19:53 by hbasheer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILOLO_H
-# define PHILOLO_H
+#ifndef PHILO_H
+# define PHILO_H
 
 # include <limits.h>
 # include <pthread.h>
@@ -78,25 +78,23 @@ void					destroy_mutex(t_data *data);
 
 // - MONITOR FUNCTIONS - //
 void					*monitor_routine(void *arg);
-void					time_has_come(t_data *data, unsigned long long i);
-void					consumption_concluded(t_data *data);
+void					philo_died(t_data *data, unsigned long long i);
+void					meals_concluded(t_data *data);
 int						check_eats(t_data *data);
 
-// - LIFE CYCLE FUNCTIONS - //
+// - PHILO ROUTINE FUNCTIONS - //
 int						create_philos_monitor(t_data *data);
-void					*peristaltic_continuum(void *arg);
-void					solitary_confinement(t_philo *philo);
-int						deadlolo(t_data *sh_data);
-
-// - CONSUME, SLUMBER, PONDER FUNCTIONS - //
-int						consumption(t_philo *philo);
-int						slumberment(t_philo *philo);
-int						ponderation(t_philo *philo);
+void					*philo_routine(void *arg);
+void					single_philo(t_philo *philo);
+int						is_dead(t_data *sh_data);
+int						philo_eat(t_philo *philo);
+int						philo_sleep(t_philo *philo);
+int						philo_think(t_philo *philo);
 
 // - FORK FUNCTIONS - //
-void					law_and_order(t_philo *philo, int *first, int *second);
-void					arrest_the_forks(t_philo *philo, int first, int second);
-void					pardon_the_forks(t_philo *philo, int first, int second);
-int						fork_checkers(t_philo *philo, int first, int second);
+void					fork_lock_order(t_philo *philo, int *first, int *second);
+void					lock_forks(t_philo *philo, int first, int second);
+void					release_forks(t_philo *philo, int first, int second);
+int						fork_checker(t_philo *philo, int first, int second);
 
 #endif

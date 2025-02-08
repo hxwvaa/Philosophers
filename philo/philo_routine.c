@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   life_cycle.c                                       :+:      :+:    :+:   */
+/*   philo_routine.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hbasheer <hbasheer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:41:28 by hbasheer          #+#    #+#             */
-/*   Updated: 2025/02/08 18:41:29 by hbasheer         ###   ########.fr       */
+/*   Updated: 2025/02/08 19:19:53 by hbasheer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philolo.h"
+#include "philo.h"
 
-int	deadlolo(t_data *sh_data)
+int	is_dead(t_data *sh_data)
 {
 	unsigned long long	i;
 
@@ -26,7 +26,7 @@ int	deadlolo(t_data *sh_data)
 	return (i);
 }
 
-void	solitary_confinement(t_philo *philo)
+void	single_philo(t_philo *philo)
 {
 	my_usleep(philo->sh_data->time_to_die, philo);
 	pthread_mutex_lock(&philo->sh_data->death_mutex);
@@ -35,7 +35,7 @@ void	solitary_confinement(t_philo *philo)
 	print_status(philo->sh_data, philo->id, DEAD);
 }
 
-void	*peristaltic_continuum(void *arg)
+void	*philo_routine(void *arg)
 {
 	t_philo	*philo;
 	int		first;
@@ -44,20 +44,20 @@ void	*peristaltic_continuum(void *arg)
 	philo = (t_philo *)arg;
 	if (philo->sh_data->num_philo == 1)
 	{
-		solitary_confinement(philo);
+		single_philo(philo);
 		return (NULL);
 	}
-	while (!deadlolo(philo->sh_data))
+	while (!is_dead(philo->sh_data))
 	{
-		law_and_order(philo, &first, &second);
-		if (fork_checkers(philo, first, second))
+		fork_lock_order(philo, &first, &second);
+		if (fork_checker(philo, first, second))
 		{
-			arrest_the_forks(philo, first, second);
-			if (consumption(philo) == 1)
-				return (pardon_the_forks(philo, first, second), NULL);
-			if (slumberment(philo) == 1)
+			lock_forks(philo, first, second);
+			if (philo_eat(philo) == 1)
+				return (release_forks(philo, first, second), NULL);
+			if (philo_sleep(philo) == 1)
 				return (NULL);
-			if (ponderation(philo) == 1)
+			if (philo_think(philo) == 1)
 				return (NULL);
 		}
 	}
@@ -72,7 +72,7 @@ int	create_philos_monitor(t_data *data)
 	while (i < data->num_philo)
 	{
 		if (pthread_create(&data->philos[i].thread, NULL,
-				&peristaltic_continuum, &data->philos[i]))
+				&philo_routine, &data->philos[i]))
 			return (printf("Error: pthread_create failed\n"), 1);
 		i++;
 	}

@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fork_tings.c                                       :+:      :+:    :+:   */
+/*   philo_fork_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hbasheer <hbasheer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:41:31 by hbasheer          #+#    #+#             */
-/*   Updated: 2025/02/08 18:41:32 by hbasheer         ###   ########.fr       */
+/*   Updated: 2025/02/08 19:16:54 by hbasheer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philolo.h"
+#include "philo.h"
 
-int	fork_checkers(t_philo *philo, int first, int second)
+int	fork_checker(t_philo *philo, int first, int second)
 {
 	int	first_id;
 	int	second_id;
@@ -28,21 +28,21 @@ int	fork_checkers(t_philo *philo, int first, int second)
 	return (0);
 }
 
-void	pardon_the_forks(t_philo *philo, int first, int second)
+void	release_forks(t_philo *philo, int first, int second)
 {
-	law_and_order(philo, &first, &second);
+	fork_lock_order(philo, &first, &second);
 	pthread_mutex_unlock(&philo->sh_data->fork_mutex[first]);
 	pthread_mutex_unlock(&philo->sh_data->fork_mutex[second]);
 }
 
-void	arrest_the_forks(t_philo *philo, int first, int second)
+void	lock_forks(t_philo *philo, int first, int second)
 {
-	law_and_order(philo, &first, &second);
+	fork_lock_order(philo, &first, &second);
 	pthread_mutex_lock(&philo->sh_data->fork_mutex[first]);
 	pthread_mutex_lock(&philo->sh_data->fork_mutex[second]);
 }
 
-void	law_and_order(t_philo *philo, int *first, int *second)
+void	fork_lock_order(t_philo *philo, int *first, int *second)
 {
 	if (philo->left_fork < philo->right_fork)
 	{
