@@ -49,19 +49,48 @@ typedef struct s_philo
 
 
 
-// - UTILS FUNCTIONS -
+// - UTILS FUNCTIONS - //
 unsigned long long ft_atoull(const char *str);
 bool scan_args(int argc, char **argv);
 unsigned long long get_time(void);
-int deadlolo(t_data *sh_data);
 int my_usleep(unsigned long long time, t_philo *philo);
 int print_status(t_data *data, int id, int status);
 
-
-// - INITIALIZATION FUNCTIONS -
+// - INITIALIZATION FUNCTIONS - //
 int init_data(t_data *data, int argc, char **argv);
 int init_philos(t_data *data);
 int init_mutex(t_data *data);
 void init_forks(t_data *data);
+
+// - FREE AND DESTROY FUNCTIONS - //
+void free_data(t_data *data, int i);
+void destroy_mutex(t_data *data);
+
+// - MONITOR FUNCTIONS - //
+void *monitor_routine(void *arg);
+void time_has_come(t_data *data, unsigned long long i);
+void consumption_concluded(t_data *data);
+int check_eats(t_data *data);
+
+// - LIFE CYCLE FUNCTIONS - //
+int create_philos_monitor(t_data *data);
+void *peristaltic_continuum(void *arg);
+void solitary_confinement(t_philo *philo);
+int deadlolo(t_data *sh_data);
+
+// - CONSUME, SLUMBER, PONDER FUNCTIONS - //
+int consumption(t_philo *philo);
+int slumberment(t_philo *philo);
+int ponderation(t_philo *philo);
+
+// - FORK FUNCTIONS - //
+void law_and_order(t_philo *philo, int *first, int *second);
+void arrest_the_forks(t_philo *philo, int first, int second);
+void pardon_the_forks(t_philo *philo, int first, int second);
+int fork_checkers(t_philo *philo, int first, int second);
+
+
+
+int deadlolo(t_data *sh_data);
 
 #endif
