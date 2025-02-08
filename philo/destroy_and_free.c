@@ -6,7 +6,7 @@
 /*   By: hbasheer <hbasheer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:41:33 by hbasheer          #+#    #+#             */
-/*   Updated: 2025/02/08 18:41:34 by hbasheer         ###   ########.fr       */
+/*   Updated: 2025/02/08 19:01:59 by hbasheer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ void	free_data(t_data *data, int i)
 {
 	free(data->forks);
 	free(data->philos);
-	if (i)
+	if (i == 1)
 	{
-		free(data->fork_mutex);
 		destroy_mutex(data);
+		free(data->fork_mutex);
 	}
 }
