@@ -6,7 +6,7 @@
 /*   By: hbasheer <hbasheer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:41:28 by hbasheer          #+#    #+#             */
-/*   Updated: 2025/02/08 19:39:41 by hbasheer         ###   ########.fr       */
+/*   Updated: 2025/02/10 11:16:46 by hbasheer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,14 +71,15 @@ int	create_philos_monitor(t_data *data)
 	i = 0;
 	while (i < data->num_philo)
 	{
-		if (pthread_create(&data->philos[i].thread, NULL,
-				&philo_routine, &data->philos[i]))
+		if (pthread_create(&data->philos[i].thread, NULL, &philo_routine,
+				&data->philos[i]))
 			return (printf("Error: pthread_create failed\n"), 1);
 		i++;
 	}
-	if (pthread_create(&data->monitor, NULL, &monitor_routine, data))
+	if (data->num_philo > 1 && pthread_create(&data->monitor, NULL,
+			&monitor_routine, data))
 		return (printf("Error: pthread_create failed\n"), 1);
-	if (pthread_join(data->monitor, NULL))
+	if (data->num_philo > 1 && pthread_join(data->monitor, NULL))
 		return (printf("Error: pthread_join failed\n"), 1);
 	i = 0;
 	while (i < data->num_philo)

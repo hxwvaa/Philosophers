@@ -1,0 +1,6 @@
+philo_inits.c:21:18: runtime error: implicit conversion from type 'int' of value -1 (32-bit, signed) to type 'unsigned long long' changed the value to 18446744073709551615 (64-bit, unsigned)
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior philo_inits.c:21:18 
+philo_utils.c:71:20: runtime error: unsigned integer overflow: 1739164873331 - 1739164873341 cannot be represented in type 'unsigned long long'
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior philo_utils.c:71:20 
+philo_monitor.c:63:19: runtime error: unsigned integer overflow: 1739164873332 - 1739164873337 cannot be represented in type 'unsigned long long'
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior philo_monitor.c:63:19 

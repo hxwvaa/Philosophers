@@ -20,4 +20,8 @@ fclean: clean
 
 re: fclean all
 
+tsan: CC = clang-19
+tsan: CFLAGS = -fsanitize=thread,undefined,integer,local-bounds -O3
+tsan: re
+
 .PHONY: all clean fclean re

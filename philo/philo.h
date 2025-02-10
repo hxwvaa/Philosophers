@@ -6,7 +6,7 @@
 /*   By: hbasheer <hbasheer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:37:58 by hbasheer          #+#    #+#             */
-/*   Updated: 2025/02/08 19:39:41 by hbasheer         ###   ########.fr       */
+/*   Updated: 2025/02/10 11:03:51 by hbasheer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ typedef struct s_data
 	unsigned long long	time_to_die;
 	unsigned long long	time_to_eat;
 	unsigned long long	time_to_sleep;
-	unsigned long long	num_eat;
+	long long			num_eat;
 	int					*forks;
 	t_philo				*philos;
 	pthread_mutex_t		*fork_mutex;
@@ -60,7 +60,7 @@ typedef struct s_philo
 }						t_philo;
 
 // - UTILS FUNCTIONS - //
-unsigned long long		ft_atoull(const char *str);
+long long				ft_atoll(const char *str);
 bool					scan_args(int argc, char **argv);
 unsigned long long		get_time(void);
 int						my_usleep(unsigned long long time, t_philo *philo);
