@@ -6,7 +6,7 @@
 /*   By: hbasheer <hbasheer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:41:26 by hbasheer          #+#    #+#             */
-/*   Updated: 2025/02/08 18:41:27 by hbasheer         ###   ########.fr       */
+/*   Updated: 2025/02/11 17:15:30 by hbasheer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	check_eats(t_data *data)
 	i = 0;
 	while (i < data->num_philo)
 	{
-		if (data->philos[i].eat_count < data->num_eat)
+		if (data->philos[i].eat_count < (unsigned long long)data->num_eat)
 			return (0);
 		i++;
 	}
@@ -60,7 +60,7 @@ void	*monitor_routine(void *arg)
 				consumption_concluded(data);
 				return (NULL);
 			}
-			if (get_time() - data->philos[i].last_eat > data->time_to_die)
+			if (get_time() > data->philos[i].last_eat + data->time_to_die)
 			{
 				time_has_come(data, i);
 				return (NULL);

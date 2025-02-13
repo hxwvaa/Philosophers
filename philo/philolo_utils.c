@@ -6,16 +6,16 @@
 /*   By: hbasheer <hbasheer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:41:20 by hbasheer          #+#    #+#             */
-/*   Updated: 2025/02/08 18:41:21 by hbasheer         ###   ########.fr       */
+/*   Updated: 2025/02/11 17:20:41 by hbasheer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philolo.h"
 
-unsigned long long	ft_atoull(const char *str)
+long long	ft_atoll(const char *str)
 {
-	unsigned long long	nb;
-	int					i;
+	long long	nb;
+	int			i;
 
 	nb = 0;
 	i = 0;
@@ -23,8 +23,8 @@ unsigned long long	ft_atoull(const char *str)
 		str++;
 	while (str[i])
 		i++;
-	if (i > 19)
-		return (ULONG_MAX);
+	if (i > 9)
+		return (LLONG_MAX);
 	while (*str >= '0' && *str <= '9')
 	{
 		nb = nb * 10 + *str - '0';
@@ -65,10 +65,9 @@ unsigned long long	get_time(void)
 
 int	my_usleep(unsigned long long time, t_philo *philo)
 {
-	unsigned long long	start;
+	const unsigned long long	start = get_time();
 
-	start = get_time();
-	while (get_time() - start < time)
+	while (get_time() < (start + time))
 	{
 		if (deadlolo(philo->sh_data))
 			return (1);

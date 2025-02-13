@@ -6,7 +6,7 @@
 /*   By: hbasheer <hbasheer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 18:41:23 by hbasheer          #+#    #+#             */
-/*   Updated: 2025/02/08 18:41:24 by hbasheer         ###   ########.fr       */
+/*   Updated: 2025/02/11 16:34:32 by hbasheer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,16 @@
 
 int	init_data(t_data *data, int argc, char **argv)
 {
-	data->num_philo = ft_atoull(argv[1]);
-	data->time_to_eat = ft_atoull(argv[3]);
-	data->time_to_die = ft_atoull(argv[2]);
-	data->time_to_sleep = ft_atoull(argv[4]);
+	data->num_philo = ft_atoll(argv[1]);
+	data->time_to_eat = ft_atoll(argv[3]);
+	data->time_to_die = ft_atoll(argv[2]);
+	data->time_to_sleep = ft_atoll(argv[4]);
 	data->num_eat = -1;
 	if (argc == 6)
-		data->num_eat = ft_atoull(argv[5]);
-	if (data->num_philo == ULONG_MAX || data->time_to_eat == ULONG_MAX
-		|| data->time_to_die == ULONG_MAX || data->time_to_sleep == ULONG_MAX
-		|| (argc == 6 && data->num_eat == ULONG_MAX))
+		data->num_eat = ft_atoll(argv[5]);
+	if (data->num_philo >= INT_MAX || data->time_to_eat >= INT_MAX
+		|| data->time_to_die >= INT_MAX || data->time_to_sleep >= INT_MAX
+		|| (argc == 6 && data->num_eat >= INT_MAX))
 		return (printf("Error: Invalid arguments\n"), 1);
 	if (argc == 6 && data->num_eat == 0)
 		return (0);
